@@ -34,16 +34,40 @@ db.connect((err) => {
 })
 
 
-app.get('/insertPupil/<pupil_id>/<name>/<surname>/<pesel>/<classs>', (request, response) => {
+app.get('/insertPupil/<pupil_id>/<name>/<surname>/<int:pesel>/<int:classs>', (request, response) => {
+    let sql = 'INSERT INTO Pupil ( pupil_id, name, surname, pesel, class ) VALUES (?, ?, ?, ?, ?)'
     let pupil_id = request.params.pupil_id
     let name = request.params.name
     let surname = request.params.surname
     let pesel = request.params.pesel
-    let classs = request.params.class
-    let sql = 'INSERT INTO Pupil ( pupil_id, name, surname, pesel, classs ) VALUES ( ?,?,?,?,?) ', {values: [pupil_id,name,surname,pesel,classs]}
-    db.query(sql, (err, result) => {
+    let classs = request.params.classs
+    db.query(sql,[pupil_id,name,surname,pesel,classs], (err, result) => {
         if (err) throw err
-        console.log("Record inserted")
+        console.log("Row inserted with id = " + rows.insertId); 
     }) 
 })
 
+app.get('/showEventById/<int:id>', (request, response) => {
+    let id = request.params.id
+    let sql = 'Select * from event where idEvent = ?'
+    db.query(sql,id, (err, result) => {
+        if (err) throw err
+        response.send(response)
+    }) 
+})
+
+app.get('/removePupil/<int:id>', (request, response) => {
+    let id = request.params.id
+    let sql = 'DELETE FROM Pupil WHERE pupil_id = ?';
+    db.query(sql,id, (err, result) => {
+        if (err) throw err
+        console.log("pupil removed")
+    }) 
+})
+
+
+
+
+app.listen(3000, function() { // odpalenie serwera i nasłuchiwanie na port 3000
+    console.log('Server is listening on port 3000'); 
+});
