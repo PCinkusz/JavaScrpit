@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let lodash = require("lodash");
 var easyinvoice = require('easyinvoice');
 const FileSaver = require('file-saver');
+const { request, response } = require('express');
 
 const DATABASE_HOST='localhost';
 const DATABASE_USER='root';
@@ -46,16 +47,73 @@ app.get('/addPupil/:name/:surname/:pesel/:class', function (request, response) {
     });
   });
 
-app.get('/removePupil/<int:id>', (request, response) => {
+app.get('/addTeacher/:name/:surname/:pesel/:subject', function (request, response) {
+    var newTeacherQueryValues = "INSERT INTO Teacher (teacher_id, name, surname, pesel, subject) VALUES (" + Math.random() + ",'"
+    + request.params.name + "','" + request.params.surname + "'," + request.params.pesel + ",'" + request.params.subject + "');"
+    console.log(newPupilQueryValues)
+    db.query(newPupilQueryValues , function (err, result, fields) {
+        if (err) throw err;
+        console.log(result);
+        console.log("Teacher " + request.params.name + ' ' + request.params.surname + " added succesfully");
+        return response.send("Teacher " + request.params.name + ' ' + request.params.surname + " added succesfully");
+    });
+});
+
+app.get('/removePupil/:id', (request, response) => {
     let id = request.params.id
     let sql = 'DELETE FROM Pupil WHERE pupil_id = ?';
     db.query(sql,id, (err, result) => {
         if (err) throw err
         console.log("pupil removed")
+        return response.send('Pupil removed successfully')
     }) 
 })
 
+app.get('/removeTeacher/:id', (request, response) => {
+    let id = request.params.id
+    let sql = 'DELETE FROM Teacher WHERE teacher_id = ?';
+    db.query(sql,id, (err, result) => {
+        if (err) throw err
+        console.log("teacher removed")
+        return response.send('Teacher removed successfully')
+    }) 
+})
 
+app.get('/showAllPupils', (request, response => {
+    let sql = 'SELECT * FROM Pupil'
+    db.query(sql, (err, result) => {
+        if (err) throw err
+        console.log(result)
+        return result
+    }) 
+}))
+
+app.get('/showAllTeacher', (request, response => {
+    let sql = 'SELECT * FROM Teacher'
+    db.query(sql, (err, result) => {
+        if (err) throw err
+        console.log(result)
+        return result
+    }) 
+}))
+
+app.get('/showPupil/:id', (request, response => {
+    let sql = 'SELECT * FROM Pupil WHERE pupil_id = ?'
+    db.query(sql,id, (err, result) => {
+        if (err) throw err
+        console.log(result)
+        return result
+    }) 
+}))
+
+app.get('/showTeacher/:id', (request, response => {
+    let sql = 'SELECT * FROM Teacher WHERE pupil_id = ?'
+    db.query(sql,id, (err, result) => {
+        if (err) throw err
+        console.log(result)
+        return result
+    }) 
+}))
 
 
 app.listen(3000, function() { // odpalenie serwera i nasłuchiwanie na port 3000
