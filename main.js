@@ -34,27 +34,17 @@ db.connect((err) => {
 })
 
 
-app.get('/insertPupil/<pupil_id>/<name>/<surname>/<int:pesel>/<int:classs>', (request, response) => {
-    let sql = 'INSERT INTO Pupil ( pupil_id, name, surname, pesel, class ) VALUES (?, ?, ?, ?, ?)'
-    let pupil_id = request.params.pupil_id
-    let name = request.params.name
-    let surname = request.params.surname
-    let pesel = request.params.pesel
-    let classs = request.params.classs
-    db.query(sql,[pupil_id,name,surname,pesel,classs], (err, result) => {
-        if (err) throw err
-        console.log("Row inserted with id = " + rows.insertId); 
-    }) 
-})
-
-app.get('/showEventById/<int:id>', (request, response) => {
-    let id = request.params.id
-    let sql = 'Select * from event where idEvent = ?'
-    db.query(sql,id, (err, result) => {
-        if (err) throw err
-        response.send(response)
-    }) 
-})
+app.get('/addPupil/:name/:surname/:pesel/:class', function (request, response) {
+    var newPupilQueryValues = "INSERT INTO pupil (pupil_id, name, surname, pesel, class) VALUES (" + Math.random() + ",'"
+    + request.params.name + "','" + request.params.surname + "'," + request.params.pesel + ",'" + request.params.class + "');"
+    console.log(newPupilQueryValues)
+    db.query(newPupilQueryValues , function (err, result, fields) {
+        if (err) throw err;
+        console.log(result);
+        console.log("Pupil " + request.params.name + ' ' + request.params.surname + " added succesfully");
+        return response.send("Pupil " + request.params.name + ' ' + request.params.surname + " added succesfully");
+    });
+  });
 
 app.get('/removePupil/<int:id>', (request, response) => {
     let id = request.params.id
